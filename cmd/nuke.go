@@ -40,7 +40,7 @@ func (n *Nuke) Run() error {
 
 	fmt.Printf("aws-nuke version %s - %s - %s\n\n", BuildVersion, BuildDate, BuildHash)
 
-	err = n.Config.ValidateAccount(n.Account.ID(), n.Account.Aliases())
+	err = n.Config.ValidateAccount(n.Account.ID(), n.Account.Aliases(), n.Parameters.SkipAliasCheck)
 	if err != nil {
 		return err
 	}
@@ -51,10 +51,18 @@ func (n *Nuke) Run() error {
 		fmt.Printf("Waiting %v before continuing.\n", forceSleep)
 		time.Sleep(forceSleep)
 	} else {
-		fmt.Printf("Do you want to continue? Enter account alias to continue.\n")
-		err = Prompt(n.Account.Alias())
-		if err != nil {
-			return err
+		if !n.Parameters.SkipAliasCheck {
+			fmt.Printf("Do you want to continue? Enter account alias to continue.\n")
+			err = Prompt(n.Account.Alias())
+			if err != nil {
+				return err
+			}
+		} else {
+			fmt.Printf("Do you want to continue? Enter 'yes' to continue.\n")
+			err = Prompt("yes")
+			if err != nil {
+				return err
+			}
 		}
 	}
 

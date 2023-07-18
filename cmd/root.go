@@ -145,6 +145,9 @@ func NewRootCommand() *cobra.Command {
 		"If specified, it actually deletes found resources. "+
 			"Otherwise it just lists all candidates.")
 	command.PersistentFlags().BoolVar(
+		&params.SkipAliasCheck, "skip-alias-check", false,
+		"If specified, skips checking if account alias exists.")
+	command.PersistentFlags().BoolVar(
 		&params.Force, "force", false,
 		"Don't ask for confirmation before deleting resources. "+
 			"Instead it waits 15s before continuing. Set --force-sleep to change the wait time.")

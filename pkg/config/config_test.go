@@ -207,20 +207,21 @@ func TestConfigValidation(t *testing.T) {
 	cases := []struct {
 		ID         string
 		Aliases    []string
+		SkipAliasCheck bool
 		ShouldFail bool
 	}{
-		{ID: "555133742", Aliases: []string{"staging"}, ShouldFail: false},
-		{ID: "1234567890", Aliases: []string{"staging"}, ShouldFail: true},
-		{ID: "1111111111", Aliases: []string{"staging"}, ShouldFail: true},
-		{ID: "555133742", Aliases: []string{"production"}, ShouldFail: true},
-		{ID: "555133742", Aliases: []string{}, ShouldFail: true},
-		{ID: "555133742", Aliases: []string{"staging", "prod"}, ShouldFail: true},
+		{ID: "555133742", Aliases: []string{"staging"}, SkipAliasCheck: false, ShouldFail: false},
+		{ID: "1234567890", Aliases: []string{"staging"}, SkipAliasCheck: false, ShouldFail: true},
+		{ID: "1111111111", Aliases: []string{"staging"}, SkipAliasCheck: false, ShouldFail: true},
+		{ID: "555133742", Aliases: []string{"production"}, SkipAliasCheck: false, ShouldFail: true},
+		{ID: "555133742", Aliases: []string{}, SkipAliasCheck: true, ShouldFail: true},
+		{ID: "555133742", Aliases: []string{"staging", "prod"}, SkipAliasCheck: false, ShouldFail: true},
 	}
 
 	for i, tc := range cases {
 		name := fmt.Sprintf("%d_%s/%v/%t", i, tc.ID, tc.Aliases, tc.ShouldFail)
 		t.Run(name, func(t *testing.T) {
-			err := config.ValidateAccount(tc.ID, tc.Aliases)
+			err := config.ValidateAccount(tc.ID, tc.Aliases, tc.SkipAliasCheck)
 			if tc.ShouldFail && err == nil {
 				t.Fatal("Expected an error but didn't get one.")
 			}
